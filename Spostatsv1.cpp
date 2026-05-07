@@ -29,7 +29,7 @@ friend int totalascolti(vector <canzoni>& c);
 friend float mediacantanti(vector <canzoni>& c);
 friend float mediaascolti(vector <canzoni>& c);
 };
-void casi(int& s,float& m, float& min, float& tc, float& ta,vector <canzoni>& cv);
+void casi(int s,vector <canzoni>& cv);
 void salva(vector <canzoni>& c, float m, float min, float tc, float ta);
 void visualizza(vector <canzoni>& c, float m, float min, float tc, float ta);
 
@@ -44,7 +44,7 @@ int main(){
     c.carica(cv);
     cout<<" cosa vuoi vedere? \n 1) media dei cantanti \n 2) media degli ascolti \n 3) totale dei cantanti \n 4) totale degli ascolti\n 0) tutto \n";
     cin>>s;
-    casi(s,m,min,tc,ta,cv);
+    casi(s,cv);
 }
 
 
@@ -67,20 +67,20 @@ int totalascolti(vector <canzoni>& c){
 
 float mediacantanti(vector <canzoni>& c){
     int contac=totalcantanti(c);
-    float media=contac/c.size();
+    float media=(float)contac/c.size();
     return media;
 }
 
 float mediaascolti(vector <canzoni>& c){
     int contam=totalascolti(c);
-    float media=contam/c.size();
+    float media=(float)contam/c.size();
     return media;
 }
 
 void salva(vector <canzoni>& c, float m, float min, float tc, float ta){
     ofstream salva;
     salva.open("musica.txt",ios::app); 
-    salva<<" la media dei cantanti è "<<m<<" \n"<<" la media degli ascolti è "<<min<<" \n"<<" il totale dei cantanti è "<<tc<<" \n"<<" il totale degli ascolti è "<<ta<<" \n";
+    salva<<" la media dei cantanti è "<<round(m)<<" \n"<<" la media degli ascolti è "<<round(min)<<" \n"<<" il totale dei cantanti è "<<tc<<" \n"<<" il totale degli ascolti è "<<ta<<" \n";
     salva.close();
     
 }
@@ -98,7 +98,8 @@ cout << "Errore: impossibile aprire il file! \n";
 }
 }
 
-void casi(int& s,float& m, float& min, float& tc, float& ta,vector <canzoni>& cv){
+void casi(int s,vector <canzoni>& cv){
+    float m,min,tc,ta;
     m=mediacantanti(cv);
     min=mediaascolti(cv);
     tc=totalcantanti(cv);
@@ -109,7 +110,6 @@ void casi(int& s,float& m, float& min, float& tc, float& ta,vector <canzoni>& cv
            break;
         case 2:
             cout<<" la media degli ascolti è "<<round(min)<<" \n";
-             salva(cv,m,min,tc,ta);
             break;
         case 3:
             
