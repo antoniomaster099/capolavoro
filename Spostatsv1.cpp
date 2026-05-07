@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <cmath>
 using namespace std;
 class canzoni {
 private:
@@ -10,60 +11,40 @@ private:
     int nascoltati;
 public:
     canzoni(){}
+
     void carica(vector <canzoni>& c){
-   int settimane;
-   cout<<" su quante settimane vuoi lavorare? ";
-   cin>>settimane;
-   c.resize(settimane);
+        int settimane;
+        cout<<" su quante settimane vuoi lavorare? ";
+        cin>>settimane;
+        c.resize(settimane);
+        
+        for( int i=0; i<c.size();i++){
+            cout<<"metti il "<<i+1<<"  numero di cantanti e poi degli ascolti fatti ";
+            cin>>c[i].ncantanti>>c[i].nascoltati;
+    }
    
-   for( int i=0; i<c.size();i++){
-       cout<<"metti il "<<i+1<<"  numero di cantanti e poi degli ascolti fatti ";
-       cin>>c[i].ncantanti>>c[i].nascoltati;
-   }
 }
 friend int totalcantanti(vector <canzoni>& c);
 friend int totalascolti(vector <canzoni>& c);
 friend float mediacantanti(vector <canzoni>& c);
 friend float mediaascolti(vector <canzoni>& c);
 };
-
+void casi(int& s,float& m, float& min, float& tc, float& ta,vector <canzoni>& cv);
 void salva(vector <canzoni>& c, float m, float min, float tc, float ta);
-void visualizza(vector <canzoni>& c);
+void visualizza(vector <canzoni>& c, float m, float min, float tc, float ta);
+
+
+
 int main(){
     float m,min,tc,ta;
-    canzoni c;
     vector <canzoni> cv;
+    canzoni c;
     int s;
-cout<<" in questo programma si vuole calcolare la media dei cantanti, la media degli ascolti, il totale dei cantanti e  degli ascolti in un certo numero di settimane \n";
+    cout<<" in questo programma si vuole calcolare la media dei cantanti, la media degli ascolti, il totale dei cantanti e  degli ascolti in un certo numero di settimane \n";
     c.carica(cv);
     cout<<" cosa vuoi vedere? \n 1) media dei cantanti \n 2) media degli ascolti \n 3) totale dei cantanti \n 4) totale degli ascolti\n 0) tutto \n";
     cin>>s;
-    switch(s){
-        case 1:
-            m=mediacantanti(cv);
-            cout<<" la media dei cantanti è "<<m<<" \n";
-            break;
-        case 2:
-            min=mediaascolti(cv);
-            cout<<" la media degli ascolti è "<<min<<" \n";
-            break;
-        case 3:
-            tc=totalcantanti(cv);
-            cout<<" il totale dei cantanti è "<<tc<<" \n";
-            break;
-        case 4:
-            ta=totalascolti(cv);
-            cout<<" il totale degli ascolti è "<<ta<<" \n";
-            break;
-        case 0:
-    m=mediacantanti(cv);
-    min=mediaascolti(cv);
-    tc=totalcantanti(cv);
-    ta=totalascolti(cv);
-    salva(cv,m,min,tc,ta);
-    visualizza(cv);
-    break;
-    }
+    casi(s,m,min,tc,ta,cv);
 }
 
 
@@ -71,10 +52,11 @@ cout<<" in questo programma si vuole calcolare la media dei cantanti, la media d
 int totalcantanti(vector <canzoni>& c){
     int conta=0;
     for( int i=0; i<c.size();i++){
-       conta+=c[i].ncantanti;
+        conta+=c[i].ncantanti;
     }
     return conta;
 }
+
 int totalascolti(vector <canzoni>& c){
     int conta=0;
     for( int i=0; i<c.size();i++){
@@ -82,33 +64,66 @@ int totalascolti(vector <canzoni>& c){
     }
     return conta;
 }
+
 float mediacantanti(vector <canzoni>& c){
- int contac=totalcantanti(c);
-   
-   float media=contac/c.size();
-   return media;
+    int contac=totalcantanti(c);
+    float media=contac/c.size();
+    return media;
 }
 
 float mediaascolti(vector <canzoni>& c){
     int contam=totalascolti(c);
-   float media=contam/c.size();
-   return media;
+    float media=contam/c.size();
+    return media;
 }
 
 void salva(vector <canzoni>& c, float m, float min, float tc, float ta){
     ofstream salva;
-    salva.open("save.txt"); 
+    salva.open("musica.txt",ios::app); 
     salva<<" la media dei cantanti è "<<m<<" \n"<<" la media degli ascolti è "<<min<<" \n"<<" il totale dei cantanti è "<<tc<<" \n"<<" il totale degli ascolti è "<<ta<<" \n";
     salva.close();
-
+    
 }
-void visualizza(vector <canzoni>& c){
-    ifstream leggi;
-leggi.open("save.txt");
-string line;
-while(getline(leggi,line)){
-    cout<<line<<"\n";
+
+void visualizza(vector <canzoni>& c, float m, float min, float tc, float ta){
+ifstream leggi("musica.txt"); // Semplice apertura in lettura
+string riga;
+if (leggi.is_open()) {
+while (getline(leggi, riga)) {
+cout << riga << endl; // Stampa quello che c'è DAVVERO nel file
 }
 leggi.close();
+} else {
+cout << "Errore: impossibile aprire il file! \n";
 }
-```
+}
+
+void casi(int& s,float& m, float& min, float& tc, float& ta,vector <canzoni>& cv){
+    m=mediacantanti(cv);
+    min=mediaascolti(cv);
+    tc=totalcantanti(cv);
+    ta=totalascolti(cv);
+    switch(s){
+        case 1:
+            cout<<" la media dei cantanti è "<<round(m)<<" \n";
+           break;
+        case 2:
+            cout<<" la media degli ascolti è "<<round(min)<<" \n";
+             salva(cv,m,min,tc,ta);
+            break;
+        case 3:
+            
+            cout<<" il totale dei cantanti è "<<tc<<" \n";
+            break;
+        case 4:
+    
+            cout<<" il totale degli ascolti è "<<ta<<" \n";
+            break;
+        case 0:
+    visualizza(cv,m,min,tc,ta);
+    break;
+}
+salva(cv,m,min,tc,ta);
+    
+
+}
